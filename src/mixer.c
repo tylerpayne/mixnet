@@ -1,6 +1,6 @@
 #include <mixnet.h>
 
-void fwd(int fd, struct sockaddr sa)
+void mixer(int fd, struct sockaddr sa)
 {
   while(1)
   {
@@ -8,7 +8,7 @@ void fwd(int fd, struct sockaddr sa)
     if (cfd < 0)
     {
       close(fd);
-      mn_error("fwd: accept failed");
+      mn_error("relay: accept failed");
     }
     size_t sz = sizeof(char)*1024;
     char *buf = (char*)malloc(sz);
@@ -17,9 +17,9 @@ void fwd(int fd, struct sockaddr sa)
     {
       close(cfd);
       close(fd);
-      mn_error("fwd: error receiving bytes");
+      mn_error("relay: rror receiving bytes");
     }
     printf("received: %s",buf);
-    // To Do: cast to mixchain
+    //Create a mixchain
   }
 }

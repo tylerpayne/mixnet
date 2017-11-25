@@ -12,7 +12,7 @@ struct mixchain
   unsigned char flag;
   char signed_key[16], dest[32];
   int len;
-  char *body;
+  char body;
 };
 
 /*

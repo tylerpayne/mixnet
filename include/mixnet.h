@@ -25,8 +25,8 @@ void setup(char *name);
 void start();
 void stop();
 
-void relay(int fd, struct sockaddr sa);
-void fwd(int fd, struct sockaddr sa);
+void mixer(int fd, struct sockaddr sa);
+void peeler(int fd, struct sockaddr sa);
 
 int create_socket(int domain, int type, char *ip_addr, int port, struct sockaddr *saddr);
 

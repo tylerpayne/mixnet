@@ -3,23 +3,23 @@
 void start()
 {
   char *localhost = "127.0.0.1";
-  int relay_port = 5000, fwd_port = 5001;
+  int mixer_port = 5000, peeler_port = 5001;
 
-  int relayfd,fwdfd;
+  int mixer_fd,peeler_fd;
   struct sockaddr relayaddr,fwdaddr;
 
-  relayfd = create_socket(AF_INET,SOCK_STREAM,localhost,relay_port, &relayaddr);
-  fwdfd = create_socket(AF_INET,SOCK_STREAM,localhost,fwd_port, &fwdaddr);
+  mixer_fd = create_socket(AF_INET,SOCK_STREAM,localhost,mixer_port, &relayaddr);
+  peeler_fd = create_socket(AF_INET,SOCK_STREAM,localhost,peeler_port, &fwdaddr);
 
-  if (listen(relayfd,10) < 0)
+  if (listen(mixer_fd,10) < 0)
   {
-    close(relayfd);
+    close(mixer_fd);
     mn_error("relay: listen failed");
   }
 
-  if (listen(fwdfd,10) < 0)
+  if (listen(peeler_fd,10) < 0)
   {
-    close(relayfd);
+    close(peeler_fd);
     mn_error("fwd: listen failed");
   }
 
@@ -27,14 +27,14 @@ void start()
   relay_pid=fork();
   if (relay_pid==0)
   {
-    relay(relayfd,relayaddr);
+    mixer(mixer_fd,relayaddr);
   } else
   {
     pid_t fwd_pid;
     fwd_pid = fork();
     if (fwd_pid == 0)
     {
-      fwd(fwdfd,fwdaddr);
+      peeler(peeler_fd,fwdaddr);
     }
   }
 }
