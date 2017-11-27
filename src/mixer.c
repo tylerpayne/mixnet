@@ -20,6 +20,10 @@ void mixer(int fd, struct sockaddr sa)
       mn_error("relay: rror receiving bytes");
     }
     printf("received: %s",buf);
+    fflush(stdout);
+
+    printf("rando: %s",r);
+    fflush(stdout);
     //Create a mixchain
   }
 }

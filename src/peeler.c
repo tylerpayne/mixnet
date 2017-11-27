@@ -20,6 +20,7 @@ void peeler(int fd, struct sockaddr sa)
       mn_error("fwd: error receiving bytes");
     }
     printf("received: %s",buf);
+    fflush(stdout);
     // To Do: cast to mixchain
   }
 }

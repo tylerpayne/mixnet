@@ -15,9 +15,12 @@ struct mixchain
   char body;
 };
 
+unsigned char ENCODE=0b1;
+unsigned char DECODE=0b0;
+
 /*
 mixchain
-- len is length in bytes of ciphertext
+- len is length in bytes of body
 if (flag & 0b10) then
  - signed_key is a 16 byte blowfish key encrypted by your public RSA key.
   if (flag & 0b1) then
