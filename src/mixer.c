@@ -21,9 +21,6 @@ void mixer(int fd, struct sockaddr sa)
     }
     printf("received: %s",buf);
     fflush(stdout);
-
-    printf("rando: %s",r);
-    fflush(stdout);
     //Create a mixchain
   }
 }

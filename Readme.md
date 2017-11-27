@@ -1,18 +1,26 @@
-# usage
+## usage
 
-## setup
+#### install
+
+````C
+$ git clone https://github.com/tylerpayne/mixnet
+$ cd mixnet
+$ sudo make install
+````
+
+#### setup
 ````C
 $ sudo ./mixnet setup name
 ````
 Replace  `name` with a username.
 
-## start
+#### start
 ````C
 $ sudo ./mixnet start
 ````
 mixnet is running on port 5000
 
-## stop
+#### stop
 ````C
 $ sudo ./mixnet stop
 ````
