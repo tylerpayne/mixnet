@@ -1,5 +1,3 @@
-# mixnet
-
 # usage
 
 ## setup
@@ -18,4 +16,4 @@ mixnet is running on port 5000
 ````C
 $ sudo ./mixnet stop
 ````
-shutdown mixnet 
+shutdown mixnet
