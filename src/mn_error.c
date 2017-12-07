@@ -2,6 +2,8 @@
 
 void mn_error(char *err)
 {
-  printf("\nmixnet error:\n%s\n\n",err);
+  printf("#########################\n####  mixnet error:  ####\n#########################\n%s\n#########################\n",err);
+  fflush(stdout);
+  fflush(stderr);
   exit(1);
 }

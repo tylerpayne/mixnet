@@ -2,15 +2,13 @@
 
 void setup(char *name)
 {
+  printf("Setting up!\n");
   struct stat st = {0};
-
-  if (stat("/etc/mixnet", &st) == -1) mkdir("/etc/mixnet", 7777);
-  printf("-1\n");
-  FILE *namefile = fopen("/etc/mixnet/name","w+");
-  printf("-2 %i\n",namefile==NULL);
+  if (stat("/usr/etc", &st) == -1) mkdir("/usr/etc", 7777);
+  if (stat("/usr/etc/mixnet", &st) == -1) mkdir("/usr/etc/mixnet", 7777);
+  FILE *namefile = fopen("/usr/etc/mixnet/name","w+");
   fwrite(name,strlen(name),1,namefile);
-  printf("-3\n");
   fclose(namefile);
-  printf("-4\n");
   KEY = generate_rsa_key();
+  printf("Ready! Run \n  sudo mixnet start\nto start.\n  sudo mixnet stop\nto stop.\n");
 }

@@ -1,11 +1,12 @@
 #include <mixnet.h>
 
-const char *HOST_FILE_PATH = "/etc/mixnet/hosts";
-const char *PID_FILE_PATH = "/etc/mixnet/pid";
-const char *PKEY_FILE_PATH = "/etc/mixnet/key.pem";
-char MIXNET_SERVER_ADDR[32];
-int MIXNET_SERVER_PORT = 5001;
-
+struct mix_t
+{
+  int fd;
+  struct sockaddr sa;
+  char *msg;
+  int len;
+};
 
 struct mixchain
 {
@@ -14,9 +15,6 @@ struct mixchain
   int len;
   char body;
 };
-
-unsigned char ENCODE=0b1;
-unsigned char DECODE=0b0;
 
 /*
 mixchain

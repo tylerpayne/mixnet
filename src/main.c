@@ -1,19 +1,26 @@
 #include <mixnet.h>
 
-int main(int argc, char **argv)
-{
-  argv[0] = "mixnet";
-  if (argc < 2) mn_error("too few arguments");
+int main(int argc, char const *argv[]) {
 
-  if (signal(SIGCHLD,handle_sigchild) == SIG_ERR) mn_error("failed to regester handler for SIGCHLD");
 
-  if (strcmp(argv[1],"start")==0) start();
-  else if (strcmp(argv[1],"stop")==0) stop();
-  else if (strcmp(argv[1],"setup")==0)
-  {
-    if (argc < 3) mn_error("too few arguments");
-    setup(argv[2]);
-  } else mn_error("bad input arguments");
+  KEY = RSA_new();
+  FILE *pubkey = fopen("/usr/etc/mixnet/pubkey.pem","r+");
+  FILE *privkey = fopen("/usr/etc/mixnet/privkey.pem","r+");
+  PEM_read_RSAPublicKey(pubkey, &KEY, NULL,NULL);
+  PEM_read_RSAPrivateKey(privkey, &KEY, NULL,NULL);
+  printf("RSA key check: %i\n",RSA_check_key(KEY));
+  fclose(pubkey);
+  fclose(privkey);
+
+  //RSA_print_fp(stdout,KEY,0);
+
+  int len = strlen(argv[1]);
+  char *s1 = (char*)malloc(len);
+  memcpy(s1,argv[1],len);
+
+  char *s2;
+  int clen;
+  public_encrypt(s1,&s2,len,&clen);
 
   return 0;
 }

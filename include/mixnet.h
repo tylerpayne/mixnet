@@ -16,14 +16,13 @@
 #include <openssl/bn.h>
 #include <openssl/pem.h>
 #include <openssl/rand.h>
+#include <pthread.h>
+#include <openssl/blowfish.h>
+#include <time.h>
 
-const char *HOST_FILE_PATH;
-const char *PID_FILE_PATH;
-const char *PKEY_FILE_PATH;
 
 typedef struct mixchain mixchain;
-unsigned char ENCODE;
-unsigned char DECODE;
+typedef struct mix_t mix_t;
 
 void mn_error(char *err);
 void handle_sigchild(int sig);
@@ -35,7 +34,7 @@ void stop();
 
 FILE *mixer_out, *mixer_err;
 void mixer(int fd, struct sockaddr sa);
-mixchain* mix(int fd, struct sockaddr sa, char *msg, int len);
+void *mix(void *m);
 
 FILE *peeler_out, *peeler_err;
 void peeler(int fd, struct sockaddr sa);
@@ -45,17 +44,13 @@ RSA *KEY;
 
 RSA *generate_rsa_key();
 
-void public_digest(char *plaintext, char *ciphertext,
-                   int *plen, int *clen,
-                   unsigned char direction);
+void public_encrypt(char *plaintext, char **ciphertext, int plen, int *clen);
+void public_decrypt(char **plaintext, char *ciphertext, int len);
 
-void private_digest(char *plaintext, char *ciphertext,
-                   int *plen, int *clen,
-                   unsigned char direction);
+void private_digest(char *plaintext, char *ciphertext, int *plen, int *clen, unsigned char direction);
 
-void symmetric_digest(char *plaintext, char *ciphertext,
-                   int *plen, int *clen,
-                   unsigned char direction);
+char *symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, int plen, int *clen);
+void symmetric_decrypt(char **plaintext, char *ciphertext, BF_KEY *key, int clen);
 
 
 #endif

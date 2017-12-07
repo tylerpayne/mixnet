@@ -2,6 +2,7 @@
 
 void peeler(int fd, struct sockaddr sa)
 {
+  printf("Peeler running!\n"); fflush(stdout);
   while(1)
   {
     int cfd = accept(fd,NULL,NULL);
@@ -19,8 +20,8 @@ void peeler(int fd, struct sockaddr sa)
       close(fd);
       mn_error("fwd: error receiving bytes");
     }
-    printf("received: %s",buf);
+    /*printf("received: %s",buf);
     fflush(stdout);
-    // To Do: cast to mixchain
+    // To Do: cast to mixchain*/
   }
 }
