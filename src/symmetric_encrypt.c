@@ -1,13 +1,13 @@
 #include <mixnet.h>
 
-char *symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, int plen, int *clen)
+void symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, char **k, int plen, int *clen)
 {
   //  printf("symmetric_encrypting %i bytes\n",plen);
 
     int len = 128;
-    unsigned char *k = (unsigned char*)malloc(len);
-    RAND_bytes(k,len);
-    BF_set_key(key,len,k);
+    *k = (unsigned char*)malloc(len);
+    RAND_bytes(*k,len);
+    BF_set_key(key,len,*k);
 
     int r = plen % 8;
     *clen = (r==0) ? plen : plen + (8-r);
@@ -22,5 +22,4 @@ char *symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, int ple
     //fwrite(*ciphertext,sizeof(char),*clen,stdout);
     //printf("\n");
     //fflush(stdout);
-    return k;
 }

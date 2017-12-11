@@ -1,5 +1,12 @@
 #include <mixnet.h>
 
+struct host
+{
+  char *ip_addr;
+  unsigned short port;
+  RSA *key;
+};
+
 struct mix_t
 {
   int fd;

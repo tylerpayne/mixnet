@@ -2,26 +2,21 @@
 
 void peeler(int fd, struct sockaddr sa)
 {
-  printf("Peeler running!\n"); fflush(stdout);
+  printf("Peeler running on port %i\n",peeler_port); fflush(stdout);
   while(1)
   {
-    int cfd = accept(fd,NULL,NULL);
-    if (cfd < 0)
-    {
-      close(fd);
-      mn_error("fwd: accept failed");
-    }
-    size_t sz = sizeof(char)*1024;
+    struct sockaddr_in from;
+    int from_len = sizeof(struct sockaddr_in);
+    int sz = 4096;
     char *buf = (char*)malloc(sz);
-    int bytes = recv(cfd,(void*)buf,sz,0);
+    int bytes = recvfrom(fd,buf,sz,MSG_WAITALL,(struct sockaddr*)&from,&from_len);
     if (bytes < 0)
     {
-      close(cfd);
       close(fd);
-      mn_error("fwd: error receiving bytes");
+      mn_error("peeler: error receiving bytes");
     }
-    /*printf("received: %s",buf);
+    printf("received %i bytes: %s\n",bytes,buf);
     fflush(stdout);
-    // To Do: cast to mixchain*/
+    peel(buf,bytes,fd);
   }
 }

@@ -18,7 +18,7 @@ int create_socket(int domain, int type, char *ip_addr, int port, struct sockaddr
   if ((bind(sockfd,(struct sockaddr *)&sa,sizeof(sa))) < 0)
   {
     close(sockfd);
-    mn_error("bind failed");
+    mn_error("failed to bind");
   }
   return sockfd;
 }

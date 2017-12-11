@@ -3,3 +3,5 @@
 tex/*
 tex
 mixnet
+tracker
+_*/*
