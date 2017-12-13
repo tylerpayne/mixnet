@@ -29,8 +29,12 @@ void start()
   mixer_pid=fork();
   if (mixer_pid==0)
   {
-    if (!verbose) freopen("/usr/etc/mixnet/mixer_out","w+",stdout);
-    if (!verbose) freopen("/usr/etc/mixnet/mixer_err","w+",stderr);
+    int pid = (int)getpid();
+    char path[128];
+    sprintf(path,"/usr/etc/mixnet/mixer_%i_out",pid);
+    if (!verbose) freopen(path,"w+",stdout);
+    sprintf(path,"/usr/etc/mixnet/mixer_%i_err",pid);
+    if (!verbose) freopen(path,"w+",stderr);
     if (signal(3,handle_mixer_sigkill) == SIG_ERR) mn_error("failed to regester handler for SIGKILL");
     time_t t = time(NULL);
     RAND_seed(&t,sizeof(time_t));
@@ -46,8 +50,12 @@ void start()
     peeler_pid = fork();
     if (peeler_pid == 0)
     {
-      if (!verbose) freopen("/usr/etc/mixnet/peeler_out","w+",stdout);
-      if (!verbose) freopen("/usr/etc/mixnet/peeler_err","w+",stderr);
+      char path[128];
+      int pid = (int)getpid();
+      sprintf(path,"/usr/etc/mixnet/peeler_%i_out",pid);
+      if (!verbose) freopen(path,"w+",stdout);
+      sprintf(path,"/usr/etc/mixnet/peeler_%i_err",pid);
+      if (!verbose) freopen(path,"w+",stderr);
       if (signal(3,handle_peeler_sigkill) == SIG_ERR) mn_error("failed to regester handler for SIGKILL");
       time_t t = time(NULL);
       RAND_seed(&t,sizeof(time_t));
@@ -59,9 +67,10 @@ void start()
       fprintf(pid_file,"%d",peeler_pid);
       fclose(pid_file);
 
-      char *up = (char*)malloc(4096);
-      sprintf(up,"%s%s","peeler_up",public_key);
-      sendto(peeler_fd,up,strlen(up),0,&tracker_sa,sizeof(tracker_sa));
+      char *up = (char*)malloc(size+strlen("peer_up"));
+      memcpy(up,"peer_up",strlen("peer_up"));
+      memcpy(up+strlen("peer_up"),public_key,size);
+      sendto(peeler_fd,up,size+strlen("peer_up"),0,&tracker_sa,sizeof(tracker_sa));
       free(up);
       free(public_key);
     }

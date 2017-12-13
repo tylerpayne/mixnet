@@ -1,68 +1,79 @@
 #include <mixnet.h>
 
-struct mix_t
+struct peer
 {
-  int fd;
-  struct sockaddr_in sa;
-  char *msg;
-  int len;
-};
-
-struct host
-{
-  char ip_addr[32];
-  unsigned short port;
+  char flag;
+  struct sockaddr_in addr;
+  char *public_key_str;
   RSA *key;
 };
 
-void *mix(void *mm)
+void mix(int fd, struct sockaddr_in sa, char *msg, int len)
 {
-  printf("MIX!\n");
-  mix_t m = *((mix_t*)mm);
-  int fd = m.fd;
-  struct sockaddr_in sa = m.sa;
+  printf("mix");
+  fflush(stdout);
+  int plen = peer_count()-1;
+  printf("plen: %i",plen);
+  fflush(stdout);
+  int *path = (int*)malloc(sizeof(int)*plen);
 
-  int len = m.len;
-  char *msg = (char*)malloc(len);
-  memcpy(msg,m.msg,len);
-
-  int plen = 2;
-  int path[2] = {0,1};
-
-
-  host *hosts[2];
+  for (int i = 0; i < plen; i++)
+  {
+    path[i] = i;
+  }
 
   BF_KEY key;
   char *cipher, *enckey, *k, *buf;
   int clen, enckey_len;
-  buf = (char*)malloc(len+64);
-  for (int i = 0; i < plen; i++)
+  int peer_size = (int)sizeof(struct peer);
+  buf = (char*)malloc(len+sizeof(struct sockaddr_in));
+
+
+// innermost layer
+  struct peer dummy;
+  memset(&dummy,0,peer_size);
+  dummy.flag='1';
+  struct peer hm1 = *peer_get(path[plen-1]);
+  hm1.flag='0';
+
+  buf = realloc(buf,len+peer_size);
+  memcpy(buf,(void*)&dummy,peer_size);
+  memcpy(buf+peer_size,msg,len);
+  symmetric_encrypt(buf,&cipher,&key,&k,len,&clen);
+  public_encrypt(k,&enckey,hm1.key,128,&enckey_len);
+
+  msg = realloc(msg,sizeof(int)+enckey_len+clen);
+  memcpy(msg,&enckey_len,sizeof(int));
+  memcpy(msg+sizeof(int),enckey,enckey_len);
+  memcpy(msg+sizeof(int)+enckey_len,cipher,clen);
+  len = sizeof(int)+clen+enckey_len;
+  free(hm1.public_key_str);
+
+  struct peer h = hm1;
+
+  for (int i = plen-2; i >= 0; i--)
   {
-    hosts[i] = hosts_get(path[i]);
-    host *h = hosts[i];
-    if (i > 0)
-    {
-      sprintf(buf,"%s:%i;%s",h->ip_addr,h->port,msg);
-    } else
-    {
-      sprintf(buf,"%s",msg);
-    }
+    h = *peer_get(path[i]);
+    printf("hm1port: %i\n",ntohs(hm1.addr.sin_port)); fflush(stdout);
+    printf("hport: %i\n",ntohs(h.addr.sin_port)); fflush(stdout);
+    h.flag = '0';
 
-    symmetric_encrypt(buf,&cipher,&key,&k,len+64,&clen);
-    printf("key: %s\n",k);
-    public_encrypt(k,&enckey,h->key,128,&enckey_len);
+    buf = realloc(buf,len+peer_size);
+    memcpy(buf,(void*)&hm1,peer_size);
+    memcpy(buf+peer_size,msg,len);
+    symmetric_encrypt(buf,&cipher,&key,&k,len,&clen);
+    printf("clen: %i symkey: %s\n",clen,k);
+    public_encrypt(k,&enckey,h.key,128,&enckey_len);
 
-    printf("enckey_len: %i\n",enckey_len);
-    buf = realloc(buf,clen+enckey_len);
-    memset(buf,0,clen+enckey_len);
-    memcpy(buf,enckey,enckey_len);
-    memcpy(buf+enckey_len,cipher,clen);
+    msg = realloc(msg,sizeof(int)+enckey_len+clen);
+    memcpy(msg,&enckey_len,sizeof(int));
+    memcpy(msg+sizeof(int),enckey,enckey_len);
+    memcpy(msg+sizeof(int)+enckey_len,cipher,clen);
+    len = sizeof(int)+clen+enckey_len;
+    free(h.public_key_str);
   }
-  struct sockaddr_in hop;
-  hop.sin_family = AF_INET;
-  inet_pton(AF_INET,&(hosts[plen-1]->ip_addr[0]),&(hop.sin_addr));
-  hop.sin_port = htons(hosts[plen-1]->port);
-  printf("sending %i bytes %s\n",enckey_len+clen,buf);
-  sendto(fd,buf,clen+enckey_len,0,(struct sockaddr*)&hop,sizeof(struct sockaddr_in));
-  return NULL;
+  printf("sending %i bytes to: %i\n",len,ntohs(h.addr.sin_port));
+  sendto(fd,msg,len,0,(struct sockaddr*)&(h.addr),sizeof(struct sockaddr_in));
+
+  exit(0);
 }

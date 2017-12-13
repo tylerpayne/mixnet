@@ -30,11 +30,15 @@ int NHOSTS;
 
 typedef struct mixchain mixchain;
 typedef struct mix_t mix_t;
-typedef struct host host;
+struct peer;
 
-void hosts_add(struct sockaddr_in from, char *pubkey);
-void hosts_remove(struct sockaddr_in from);
-host *hosts_get(int idx);
+void peer_add(struct sockaddr_in from, char *pubkey, int len);
+void peer_remove(struct sockaddr_in from);
+struct peer *peer_get(int idx);
+struct peer *peer_find(struct sockaddr_in addr);
+int peer_count();
+
+void *memmem(const void *haystack, size_t hlen, const void *needle, size_t nlen);
 
 void mn_error(char *err);
 void handle_sigchild(int sig);
@@ -50,7 +54,7 @@ void stop();
 
 FILE *mixer_out, *mixer_err;
 void mixer(int fd, struct sockaddr sa);
-void *mix(void *m);
+void mix(int fd, struct sockaddr_in sa, char *msg, int len);
 
 FILE *peeler_out, *peeler_err;
 void peeler(int fd, struct sockaddr sa);
@@ -66,7 +70,6 @@ void private_encrypt(char *plaintext, char **ciphertext, RSA *key, int plen, int
 void public_decrypt(char **plaintext, char *ciphertext, RSA *key, int len);
 
 void symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, char **k, int plen, int *clen);
-void symmetric_decrypt(char **plaintext, char *ciphertext, BF_KEY *key, int clen);
-
+void symmetric_decrypt(char **plaintext, char *ciphertext, BF_KEY *key, int *plen, int clen);
 
 #endif

@@ -1,6 +1,6 @@
 #include <mixnet.h>
 
-void hosts_remove(struct sockaddr_in from)
+void peer_remove(struct sockaddr_in from)
 {
   printf("removing\n");
   FILE *HOSTS_FILE = fopen("/usr/etc/mixnet/hosts","r+");

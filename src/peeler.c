@@ -10,13 +10,13 @@ void peeler(int fd, struct sockaddr sa)
     int sz = 4096;
     char *buf = (char*)malloc(sz);
     int bytes = recvfrom(fd,buf,sz,MSG_WAITALL,(struct sockaddr*)&from,&from_len);
+    printf("got %i bytes\n",bytes);
     if (bytes < 0)
     {
       close(fd);
       mn_error("peeler: error receiving bytes");
     }
-    printf("received %i bytes: %s\n",bytes,buf);
-    fflush(stdout);
-    peel(buf,bytes,fd);
+    pid_t peeler_pid = fork();
+    if (peeler_pid == 0) peel(buf,bytes,fd);
   }
 }
