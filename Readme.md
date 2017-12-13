@@ -15,9 +15,12 @@ Replace  `name` with a username.
 ````C
 root$ ./mixnet start [-m] -MIXER_PORT [-p] PEELER_PORT [-q]
 ````
-mixer running on port 5000 or `MIXER_PORT`, treat this port as a proxy
-peeler running on port 5001 or `PEELER_OUT`
-(quiet) `-q` redirects mixer and peeler `stdout` and `stderr` to files in /usr/etc/mixnet
+the mixer server will be running on port `5000` or `MIXER_PORT`, treat this port as a proxy
+
+the peeler server will be running on port `5001` or `PEELER_OUT`
+
+`-q` (quiet) redirects the mixer and peeler processes' `stdout` and `stderr` to files in `/usr/etc/mixnet`
+
 
 ### stop
 ````C
