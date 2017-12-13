@@ -19,6 +19,8 @@
 #include <pthread.h>
 #include <openssl/blowfish.h>
 #include <time.h>
+#include <fcntl.h>
+
 
 unsigned char verbose;
 char *MIXNET_PATH, *localhost, *tracker_addr;

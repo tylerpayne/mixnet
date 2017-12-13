@@ -54,7 +54,11 @@ void mix(int fd, struct sockaddr_in sa, char *msg, int len)
   for (int i = plen-2; i >= 0; i--)
   {
     h = *peer_get(path[i]);
-    printf("hm1port: %i\n",ntohs(hm1.addr.sin_port)); fflush(stdout);
+    printf("\n\nhm1:\n");
+    fwrite((char*)&hm1,1,peer_size,stdout);
+    printf("\n");
+    fflush(stdout);
+    //printf("hm1port: %i\n",ntohs(hm1.addr.sin_port)); fflush(stdout);
     printf("hport: %i\n",ntohs(h.addr.sin_port)); fflush(stdout);
     h.flag = '0';
 

@@ -31,24 +31,23 @@ void peel(char *msg, int len, int fd)
 
   struct peer h = *(struct peer*)malloc(sizeof(struct peer));
   memcpy(&h,unwrapped_msg,sizeof(struct peer));
-  printf("f=%c next hop: %s:%i\n",h.flag,inet_ntoa(h.addr.sin_addr),ntohs(h.addr.sin_port));
   fflush(stdout);
   payload_len = um_len-sizeof(struct peer);
-  printf("payload_len: %i",payload_len);
+  printf("payload_len: %i\n",payload_len);
 
-  printf("fd: %i\n",fd);
-  printf("h is null %i\n",&(h.addr)==NULL);
+  printf("\n\nh:\n");
+  fwrite((char*)&h,1,sizeof(struct peer),stdout);
+  printf("\n");
+  fflush(stdout);
 
 
   char *payload = (char*)malloc(payload_len);
   memcpy(payload,unwrapped_msg+sizeof(struct peer),payload_len);
-  printf("payload: ");
-  fwrite(payload,1,payload_len,stdout);
   fflush(stdout);
+  printf("f=%c next hop: %s:%i\n",h.flag,inet_ntoa(h.addr.sin_addr),ntohs(h.addr.sin_port));
+
   sendto(fd,payload,payload_len,0,(struct sockaddr*)&(h.addr),sizeof(struct sockaddr_in));
-  fsync(fd);
-  printf("hello2\n");
   perror("sendto");
   fflush(stdout);
-  exit(0);
+  //exit(0);
 }
