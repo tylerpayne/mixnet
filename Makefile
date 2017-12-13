@@ -11,7 +11,7 @@ mixnet:
 tracker:
 	$(CC) $(shell ls tracker_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tracker -lcrypto -lpthread
 
-run_test:
+run_test: build
 	./tracker start
 	./mixnet start -m 5004 -p 5005 -q
 	./mixnet start -m 5006 -p 5007 -q
