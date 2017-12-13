@@ -5,6 +5,7 @@ extern void tracker(int fd, struct sockaddr sa);
 void start()
 {
   tracker_fd = create_socket(AF_INET,SOCK_DGRAM,tracker_addr,tracker_port, &tracker_sa);
+  fclose(fopen("/usr/etc/mixnet/peer","w+"));
 
   pid_t tracker_pid;
   tracker_pid=fork();

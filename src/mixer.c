@@ -9,17 +9,14 @@ void mixer(int fd, struct sockaddr sa)
     size_t sz = sizeof(char)*4096;
     char *buf = (char*)malloc(sz);
     int bytes;
-    bytes = (int)recvfrom(fd,(void*)buf,sz,0,(struct sockaddr*)&from,NULL);
-    bytes = strlen(buf);
+    socklen_t from_len = 0;
+    bytes = (int)recvfrom(mixer_fd,buf,sz,0,(struct sockaddr*)&from,&from_len);
+    printf("got %i bytes\n",bytes);
     if (bytes < 0)
     {
       close(fd);
       mn_error("mixer: error receiving bytes");
     }
-    pid_t mix_pid = fork();
-    if (mix_pid == 0)
-    {
-      mix(fd,from,buf,bytes);
-    }
+    mix(mixer_fd,from,buf,bytes);
   }
 }

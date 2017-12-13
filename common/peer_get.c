@@ -40,10 +40,10 @@ struct peer *peer_get(int idx)
   printf("4\n");
   fflush(stdout);
 
-  h->public_key_str = (char* )malloc(2048);
+  h->public_key_str = (char* )malloc(2048+1024);
   printf("4.5\n"); fflush(stdout);
-  memcpy(h->public_key_str,comma+sizeof(struct peer),2048);
-  BIO *membuf = BIO_new_mem_buf(h->public_key_str,2048);
+  memcpy(h->public_key_str,comma+sizeof(struct peer),2048+0124);
+  BIO *membuf = BIO_new_mem_buf(h->public_key_str,2048+1024);
   perror("BIO");
   printf("got host with port: %i\npublic key: %s\n\n",ntohs(h->addr.sin_port),h->public_key_str);
   fflush(stdout);

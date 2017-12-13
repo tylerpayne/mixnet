@@ -6,7 +6,6 @@ void setup(char *name)
   struct stat st = {0};
   if (stat("/usr/etc", &st) == -1) mkdir("/usr/etc", 7777);
   if (stat("/usr/etc/mixnet", &st) == -1) mkdir("/usr/etc/mixnet", 7777);
-  if (stat("/usr/etc/mixnet/keys", &st) == -1) mkdir("/usr/etc/mixnet/keys", 7777);
   FILE *namefile = fopen("/usr/etc/mixnet/name","w+");
   fwrite(name,strlen(name),1,namefile);
   fclose(namefile);

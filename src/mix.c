@@ -22,62 +22,30 @@ void mix(int fd, struct sockaddr_in sa, char *msg, int len)
     path[i] = i;
   }
 
-  BF_KEY key;
-  char *cipher, *enckey, *k, *buf;
-  int clen, enckey_len;
-  int peer_size = (int)sizeof(struct peer);
-  buf = (char*)malloc(len+sizeof(struct sockaddr_in));
-
+  int peer_size = sizeof(struct peer);
 
 // innermost layer
-  struct peer dummy;
-  memset(&dummy,0,peer_size);
-  dummy.flag='1';
-  struct peer hm1 = *peer_get(path[plen-1]);
-  hm1.flag='0';
 
-  buf = realloc(buf,len+peer_size);
-  memcpy(buf,(void*)&dummy,peer_size);
-  memcpy(buf+peer_size,msg,len);
-  symmetric_encrypt(buf,&cipher,&key,&k,len,&clen);
-  public_encrypt(k,&enckey,hm1.key,128,&enckey_len);
+  struct peer hm1;
+  memcpy(&hm1,msg,peer_size);
 
-  msg = realloc(msg,sizeof(int)+enckey_len+clen);
-  memcpy(msg,&enckey_len,sizeof(int));
-  memcpy(msg+sizeof(int),enckey,enckey_len);
-  memcpy(msg+sizeof(int)+enckey_len,cipher,clen);
-  len = sizeof(int)+clen+enckey_len;
-  free(hm1.public_key_str);
+  char *buf = (char*)malloc(len);
+  int buf_len = len;
+  memcpy(buf,msg,len);
 
   struct peer h = hm1;
 
-  for (int i = plen-2; i >= 0; i--)
+  for (int i = plen-1; i >= 0; i--)
   {
     h = *peer_get(path[i]);
-    printf("\n\nhm1:\n");
-    fwrite((char*)&hm1,1,peer_size,stdout);
-    printf("\n");
-    fflush(stdout);
-    //printf("hm1port: %i\n",ntohs(hm1.addr.sin_port)); fflush(stdout);
-    printf("hport: %i\n",ntohs(h.addr.sin_port)); fflush(stdout);
-    h.flag = '0';
-
-    buf = realloc(buf,len+peer_size);
-    memcpy(buf,(void*)&hm1,peer_size);
-    memcpy(buf+peer_size,msg,len);
-    symmetric_encrypt(buf,&cipher,&key,&k,len,&clen);
-    printf("clen: %i symkey: %s\n",clen,k);
-    public_encrypt(k,&enckey,h.key,128,&enckey_len);
-
-    msg = realloc(msg,sizeof(int)+enckey_len+clen);
-    memcpy(msg,&enckey_len,sizeof(int));
-    memcpy(msg+sizeof(int),enckey,enckey_len);
-    memcpy(msg+sizeof(int)+enckey_len,cipher,clen);
-    len = sizeof(int)+clen+enckey_len;
-    free(h.public_key_str);
+    pack((void**)&msg,&len,hm1,h,buf,buf_len);
+    hm1 = h;
+    buf = msg;
+    buf_len = len;
   }
   printf("sending %i bytes to: %i\n",len,ntohs(h.addr.sin_port));
-  sendto(fd,msg,len,0,(struct sockaddr*)&(h.addr),sizeof(struct sockaddr_in));
-
-  exit(0);
+  fflush(stdout);
+  sendto(mixer_fd,msg,len,0,(struct sockaddr*)&(h.addr),sizeof(struct sockaddr_in));
+  perror("sent");
+  free(buf);
 }

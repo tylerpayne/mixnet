@@ -18,8 +18,10 @@ void symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, char **k
     {
       BF_ecb_encrypt((void*)(plaintext+i), (void*)(*ciphertext+i), key, BF_ENCRYPT);
     }
-    //printf("ciphertext: ");
-    //fwrite(*ciphertext,sizeof(char),*clen,stdout);
-    //printf("\n");
-    //fflush(stdout);
+    printf("symmetrically encrypted %i bytes plaintext: \" ",plen);
+    fwrite(plaintext,1,plen,stdout);
+    printf("\"\n to %i bytes ciphertext \"",*clen);
+    fwrite(*ciphertext,1,*clen,stdout);
+    printf("\"\n");
+    fflush(stdout);
 }

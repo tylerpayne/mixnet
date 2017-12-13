@@ -1,22 +1,26 @@
 CC=gcc
 
-.PHONY: build run_test tracker mixnet test kill install uninstall clean
+.PHONY: build tester run_test tracker mixnet test kill install uninstall clean
 
 build: mixnet tracker
 
 mixnet:
 	$(CC) $(shell ls src/*.c) $(shell ls common/*.c) -Iinclude/ -o mixnet -lcrypto -lpthread
 
-
 tracker:
 	$(CC) $(shell ls tracker_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tracker -lcrypto -lpthread
 
-run_test: build
-	./tracker start
+tester:
+	$(CC) $(shell ls tester_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tester -lcrypto -lpthread
+
+run_test: build tester
+	./tracker start -q
 	./mixnet start -m 5004 -p 5005 -q
 	./mixnet start -m 5006 -p 5007 -q
+	./mixnet start -m 5008 -p 5009 -q
+	./mixnet start -m 5010 -p 5011 -q
 	./mixnet start -m 5000 -p 5001 -q
-	python tester.py
+	./tester
 
 kill:
 	kill -9 $(shell pidof mixnet tracker)
@@ -30,7 +34,7 @@ uninstall:
 		rm -rf /usr/include/mixnet.h
 		rm -rf /usr/etc/mixnet
 
-clean:
+clean: kill
 	rm /usr/etc/mixnet/mixer*err
 	rm /usr/etc/mixnet/mixer*out
 	rm /usr/etc/mixnet/peeler*err

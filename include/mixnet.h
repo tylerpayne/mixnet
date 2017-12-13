@@ -58,18 +58,21 @@ FILE *mixer_out, *mixer_err;
 void mixer(int fd, struct sockaddr sa);
 void mix(int fd, struct sockaddr_in sa, char *msg, int len);
 
+void pack(void** bytes, int* bytes_len, struct peer last_hop, struct peer next_hop, char *msg, int msg_len);
+void unpack(void** bytes, int* bytes_len, struct peer **next_hop, char *msg, int msg_len);
+
 FILE *peeler_out, *peeler_err;
 void peeler(int fd, struct sockaddr sa);
-void peel(char *msg, int len, int fd);
+void peel(char *msg, int len, int fd, struct sockaddr_in from);
 
 RSA *generate_rsa_key();
 RSA *RSAKEY;
 
 void public_encrypt(char *plaintext, char **ciphertext, RSA *key, int plen, int *clen);
-void private_decrypt(char **plaintext, char *ciphertext, RSA *key, int len);
+void private_decrypt(char **plaintext, char *ciphertext, RSA *key, int *plen, int clen);
 
 void private_encrypt(char *plaintext, char **ciphertext, RSA *key, int plen, int *clen);
-void public_decrypt(char **plaintext, char *ciphertext, RSA *key, int len);
+void public_decrypt(char **plaintext, char *ciphertext, RSA *key, int *plen, int clen);
 
 void symmetric_encrypt(char *plaintext, char **ciphertext, BF_KEY *key, char **k, int plen, int *clen);
 void symmetric_decrypt(char **plaintext, char *ciphertext, BF_KEY *key, int *plen, int clen);

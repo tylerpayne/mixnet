@@ -10,7 +10,10 @@ void symmetric_decrypt(char **plaintext, char *ciphertext, BF_KEY *key, int *ple
       BF_ecb_encrypt((void*)(ciphertext+i), (void*)(*plaintext+i), key, BF_DECRYPT);
     }
     *plen = clen;
-    fwrite(*plaintext,1,clen,stdout);
-    printf("\n");
+    printf("symmetrically decrypted %i bytes ciphertext: \" ",clen);
+    fwrite(ciphertext,1,clen,stdout);
+    printf("\"\n to %i bytes plaintext \"",*plen);
+    fwrite(*plaintext,1,*plen,stdout);
+    printf("\"\n");
     fflush(stdout);
 }
