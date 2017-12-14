@@ -62,7 +62,9 @@ run_test: build tester
 	./tester
 ````
 
-You can inspect the output from each Between tests be sure to run
+You can inspect the output from each mixer and peeler in the process id labeled files in `/usr/etc/mixnet`.
+
+Between tests be sure to run
 
 ````C
 root$ make clean
