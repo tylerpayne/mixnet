@@ -5,13 +5,13 @@ CC=gcc
 build: mixnet tracker
 
 mixnet:
-	$(CC) $(shell ls src/*.c) $(shell ls common/*.c) -Iinclude/ -o mixnet -lcrypto -lpthread
+	$(CC) $(shell ls src/*.c) $(shell ls common/*.c) -Iinclude/ -o mixnet -lcrypto
 
 tracker:
-	$(CC) $(shell ls tracker_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tracker -lcrypto -lpthread
+	$(CC) $(shell ls tracker_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tracker -lcrypto
 
 tester:
-	$(CC) $(shell ls tester_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tester -lcrypto -lpthread
+	$(CC) $(shell ls tester_src/*.c) $(shell ls common/*.c) -Iinclude/ -o tester -lcrypto
 
 run_test: build tester
 	./tracker start -q

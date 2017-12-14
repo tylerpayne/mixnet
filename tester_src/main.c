@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]) {
   memcpy(payload+peer_size,"Hello, world!",strlen("Hello, world!"));
 
   sendto(sockfd,payload,payload_len,0,(struct sockaddr*)mn_addr,sizeof(struct sockaddr_in));
-  printf("sending %i byte message \"%s\" to %s:%i via mixnet running at %s:%i\n",strlen("Hello, world!"),"Hello, world!",inet_ntoa(addr->sin_addr),ntohs(addr->sin_port),inet_ntoa(mn_addr->sin_addr),ntohs(mn_addr->sin_port));
+  printf("sending %i byte message \"%s\" to %s:%i via mixer running at %s:%i\n",strlen("Hello, world!"),"Hello, world!",inet_ntoa(addr->sin_addr),ntohs(addr->sin_port),inet_ntoa(mn_addr->sin_addr),ntohs(mn_addr->sin_port));
 
 
   char *buf = malloc(1024*1024);

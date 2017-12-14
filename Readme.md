@@ -1,6 +1,4 @@
-## usage
-
-### setup
+## setup
 
 ````C
 $ git clone https://github.com/tylerpayne/mixnet
@@ -10,6 +8,8 @@ root$ make build
 root$ ./mixnet setup <NAME>
 ````
 Replace  `name` with a username.
+
+## usage
 
 ### start
 ````C
@@ -30,7 +30,7 @@ root$ ./mixnet stop
 ## demo
 
 ### tracker
-The tracker (akin to a bittorrent tracker) tracks which peers in the mixnet are currently available.
+The tracker (akin to a bittorrent tracker) tracks which peers in the mixnet are currently available. The tracker would presumably run on a reliable public server in a WAN implementation of mixnet.
 
 the tracker is started by
 
@@ -62,7 +62,7 @@ run_test: build tester
 	./tester
 ````
 
-Between tests be sure to run
+You can inspect the output from each Between tests be sure to run
 
 ````C
 root$ make clean
